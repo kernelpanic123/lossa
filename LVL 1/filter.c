@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     }
 	char *str = argv[1];
 	char current_char;
-	ssize_t bytes_read;
+	size_t bytes_read;
     int buff_idx = 0;
     int search_len = strlen(str);
     while ((bytes_read = read(STDIN_FILENO, &current_char, 1)) > 0) 
