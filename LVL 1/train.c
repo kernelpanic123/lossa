@@ -6,12 +6,12 @@
 /*   By: abtouait <abtouait@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 18:51:42 by abtouait          #+#    #+#             */
-/*   Updated: 2025/08/25 14:10:17 by abtouait         ###   ########.fr       */
+/*   Updated: 2025/08/27 23:12:28 by abtouait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdio.h"
 #include "unistd.h"
+#include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
 
@@ -20,7 +20,7 @@
 int ft_strncmp(char *s1, char *s2, int n)
 {
 	int i = 0;
-	while (s1[i] == s2[i] && i < n)
+	while (i < n && s1[i] == s2[i])
 		i++;
 	if (i == n)
 		return (1);
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 	if (argc != 2 || argv[1] == NULL || strlen(argv[1]) == 0)
 		return (1);
 	char *buff = malloc(sizeof(char) * BUFFER_SIZE);
-	if (buff == NULL)
+	if (!buff)
 	{
 		fprintf(stderr, "Error :");
 		perror("");
@@ -43,9 +43,9 @@ int main(int argc, char **argv)
 	size_t bytes_read;
 	int buff_idx = 0;
 	int search_len = strlen(str);
-	while ((bytes_read = read(STDIN_FILENO, &current_char, 1)) > 0)
+	while((bytes_read = read(0, &current_char, 1)) > 0)
 	{
-		if (buff_idx >= BUFFER_SIZE - 1)
+		if (buff_idx >= BUFFER_SIZE)
 			break ;
 		buff[buff_idx++] = current_char;
 	}
