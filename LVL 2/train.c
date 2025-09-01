@@ -2,48 +2,59 @@
 #include "unistd.h"
 #include "stdlib.h"
 
-void print_board(int n, int *board)
+int first_arg;
+int *tab;
+int size;
+
+void print_subset(int subsize, int *subset)
 {
 	int i = 0;
-	while (i < n)
+	while (i < subsize)
 	{
-		printf("%d", board[i]);
-		if (i < n -1)
+		printf("%d", subset[i]);
+		if (i < subsize - 1)
 			printf(" ");
 		i++;
 	}
-	printf(" ");
+	printf("\n");
 }
-int is_valid(int *board, int row, int col)
+int calcul_subset(int *subset, int subsize)
 {
 	int i = 0;
-	while (i < row)
+	int sum = 0;
+	while (i < subsize)
 	{
-		if (board[i] == col)
-			return (0);
-		if (board[i] -i == col - row)
-			return (0);
-		if (board[i] + i == col + row)
-			return (0);
+		sum = sum + subset[i];
+		i++;
 	}
-	return (1);
+	return (sum);
 }
-void nqueen(int n, int *board, int row)
+void solve(int *subset, int current_index, int subsize)
 {
-	int col = 0;
-
-	if (row == n)
+	if (current_index == size)
 	{
-		print_board(n, board);
+		if (calcul_subset(subset, subsize) == first_arg && subsize != 0)
+			print_subset(subsize, subset);
 		return ;
 	}
-	while (col < n)
+	solve(subset, current_index + 1, subsize);
+	subset[subsize] = tab[current_index];
+	solve(subset + 1, current_index + 1, subsize);
+}
+int main(int argc, char **argv)
+{
+	if (argc <= 2)
 	{
-		if (is_valid(board, row, col))
-		{
-			board[row] = col;
-			nqueen(n, board, row + 1);
-		}
-		col++;
+		printf("\n");
+		return (0);
 	}
+	first_arg = atoi(argv[1]);
+	size = argc - 2;
+	tab = malloc(sizeof(int) * size);
+	int *subset = calloc(size, sizeof(int));
+	for (int i = 0; i < size; i++)
+		tab[i] = atoi(argv[i + 2]);
+	int current_index = 0;
+	int subsize = 0;
+	solve(subset, current_index, subsize);
 }
