@@ -22,7 +22,14 @@ int is_valid(int *board, int row, int col)
 	while (i < row)
 	{
 		if (board[i] == col)
+			return (0);
+		if (board[i] - i == (col - row))
+			return (0);
+		if (board[i] + i == (col + row))
+			return (0);
+		i++;
 	}
+	return (1);
 }
 
 void nqueen(int n, int *board, int row)
@@ -39,7 +46,7 @@ void nqueen(int n, int *board, int row)
 		if (is_valid(board, row, col))
 		{
 			board[row] = col;
-			nqueen(n, board, row);
+			nqueen(n, board, row + 1);
 		}
 		col++;
 	}

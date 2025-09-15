@@ -6,72 +6,59 @@
 /*   By: abtouait <abtouait@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 18:51:42 by abtouait          #+#    #+#             */
-/*   Updated: 2025/08/27 23:12:28 by abtouait         ###   ########.fr       */
+/*   Updated: 2025/09/11 02:14:39 by abtouait         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "stdlib.h"
 #include "unistd.h"
 #include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
 
-#define BUFFER_SIZE (10000 + 1)
+#define BUFFER_SIZE 4
 
-int ft_strncmp(char *s1, char *s2, int n)
+char *ft_strdup(char *s1)
 {
 	int i = 0;
-	while (i < n && s1[i] == s2[i])
+	char *s2;
+
+	while (s1[i])
 		i++;
-	if (i == n)
-		return (1);
-	else
-		return (0);
+	s2 = malloc(sizeof(char) * i + 1);
+	i = 0;
+	while (s1[i])
+	{
+		s2[i] = s1[i];
+		i++;
+	}
+	s2[i] = '\0';
+	return (s2);
 }
-int main(int argc, char **argv)
+char *gnl(int fd)
 {
-	if (argc != 2 || argv[1] == NULL || strlen(argv[1]) == 0)
-		return (1);
-	char *buff = malloc(sizeof(char) * BUFFER_SIZE);
-	if (!buff)
+	static char buff[BUFFER_SIZE];
+	char line[70000];
+	static int buffer_read;
+	static int buffer_pos;
+	int i = 0;
+	
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	while (1)
 	{
-		fprintf(stderr, "Error :");
-		perror("");
-		return (1);
-	}
-	char *str = argv[1];
-	char current_char;
-	size_t bytes_read;
-	int buff_idx = 0;
-	int search_len = strlen(str);
-	while((bytes_read = read(0, &current_char, 1)) > 0)
-	{
-		if (buff_idx >= BUFFER_SIZE)
-			break ;
-		buff[buff_idx++] = current_char;
-	}
-	if (bytes_read == -1)
-	{
-		fprintf(stderr, "Error :");
-		perror("");
-		free(buff);
-		return (1);
-	}
-	buff[buff_idx] = '\0';
-	int process_idx = 0;
-	while (buff[process_idx] != '\0')
-	{
-		if (process_idx + search_len <= buff_idx && ft_strncmp(&buff[process_idx], str, search_len) == 1)
+		if (buffer_pos >= buffer_read)
 		{
-			for (int y = 0; y < search_len; y++)
-				write(1, "*", 1);
-			process_idx += search_len;
+			buffer_read = read(fd, buff, BUFFER_SIZE);
+			buffer_pos = 0;
+			if (buffer_read <= 0)
+				break ;
+			if (buffer_pos == '\n')
+				break ;
 		}
-		else
-		{
-			write(1, &buff[process_idx], 1);
-			process_idx++;
-		}
+		line[i] = buff[buffer_pos++];
+		i++;
 	}
-	free(buff);
-	return (0);
+	line[i] = '\0';
+	if (i == 0)
+		return (NULL);
+	return(ft_strdup(line));
 }

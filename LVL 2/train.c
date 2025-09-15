@@ -1,60 +1,67 @@
-#include "stdio.h"
 #include "unistd.h"
+#include "stdio.h"
 #include "stdlib.h"
 
-int first_arg;
-int *tab;
-int size;
-
-void print_subset(int subsize, int *subset)
+void print_board(int *board, int n)
 {
 	int i = 0;
-	while (i < subsize)
+	while (i < n)
 	{
-		printf("%d", subset[i]);
-		if (i < subsize - 1)
+		printf("%d", board[i]);
+		if (i < n -1)
 			printf(" ");
 		i++;
 	}
 	printf("\n");
 }
-int calcul_subset(int *subset, int subsize)
+int is_valid(int *board, int row, int col)
 {
 	int i = 0;
-	int sum = 0;
-	while (i < subsize)
+	while (i < row)
 	{
-		sum = sum + subset[i];
+		if (board[i] == col)
+			return (0);
+		if (board[i] - i == (col - row))
+			return (0);
+		if (board[i] + i == (col + row))
+			return (0);
 		i++;
 	}
-	return (sum);
+	return (1);
 }
-void solve(int *subset, int current_index, int subsize)
+void nqueen(int *board, int n, int row)
 {
-	if (current_index == size)
+	int col = 0;
+
+	if (row == n)
 	{
-		if (calcul_subset(subset, subsize) == first_arg && subsize != 0)
-			print_subset(subsize, subset);
+		print_board(board, n);
 		return ;
 	}
-	solve(subset, current_index + 1, subsize);
-	subset[subsize] = tab[current_index];
-	solve(subset + 1, current_index + 1, subsize);
+	while (col < n)
+	{
+		if (is_valid(board, row, col))
+		{
+			board[row] = col;
+			nqueen(board, n, row + 1);
+		}
+		col++;
+	}
 }
 int main(int argc, char **argv)
 {
-	if (argc <= 2)
+	if (argc != 2)
 	{
 		printf("\n");
 		return (0);
 	}
-	first_arg = atoi(argv[1]);
-	size = argc - 2;
-	tab = malloc(sizeof(int) * size);
-	int *subset = calloc(size, sizeof(int));
-	for (int i = 0; i < size; i++)
-		tab[i] = atoi(argv[i + 2]);
-	int current_index = 0;
-	int subsize = 0;
-	solve(subset, current_index, subsize);
+	int n = atoi(argv[1]);
+	int board[10000];
+	int i = 0;
+	while (i < n)
+	{
+		board[i] = 0;
+		i++;
+	}
+	nqueen(board, n, 0);
 }
